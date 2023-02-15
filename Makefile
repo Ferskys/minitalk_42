@@ -6,39 +6,60 @@
 #    By: fsuomins <fsuomins@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/14 13:34:30 by fsuomins          #+#    #+#              #
-#    Updated: 2023/02/14 13:34:53 by fsuomins         ###   ########.fr        #
+#    Updated: 2023/02/15 15:59:56 by fsuomins         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SOURCES = server.c client.c
-OBJECTS = $(SOURCES:.c=.o)
+NAME = minitalk
+SERVER = server
+CLIENT = client
 
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+BONUS = minitalk_bonus
+SERVER_BONUS = server_bonus
+CLIENT_BONUS = client_bonus
 
-all: server client
+SERVER_SRCS = ./mandatory/src/server.c
+CLIENT_SRCS = ./mandatory/src/client.c
 
-bonus: server client
+SERVER_SRCS_BONUS = ./bonus/src_bonus/server_bonus.c
+CLIENT_SRCS_BONUS = ./bonus/src_bonus/client_bonus.c
 
-server: server.o libft
-	$(CC) -o $@ $< -Llibft -lft
+CC = -cc
+FLAGS = -Wall -Wextra -Werror
+INCLUDE = libft/libft.a
 
-client: client.o libft
-	$(CC) -o $@ $< -Llibft -lft
+all: $(NAME)
 
-%.o: %.c
-	$(CC) -c $(CFLAGS) $?
+$(NAME): $(SERVER) $(CLIENT)
 
-libft:
+$(SERVER):
 	make -C libft
+	$(CC) $(SERVER_SRCS) $(INCLUDE) $(FLAGS) -o $(SERVER)
+
+$(CLIENT):
+	make -C libft
+	$(CC) $(CLIENT_SRCS) $(INCLUDE) $(FLAGS) -o $(CLIENT)
+
+bonus:  $(BONUS)
+
+$(BONUS) : $(SERVER_BONUS) $(CLIENT_BONUS)
+
+$(SERVER_BONUS):
+	make -C libft
+	$(CC) $(SERVER_SRCS_BONUS) $(INCLUDE) $(FLAGS) -o $(SERVER_BONUS)
+
+$(CLIENT_BONUS):
+	make -C libft
+	$(CC) $(CLIENT_SRCS_BONUS) $(INCLUDE) $(FLAGS) -o $(CLIENT_BONUS)
 
 clean:
-	rm -f $(OBJECTS)
-	make -C libft clean
-	
-fclean: clean
-	rm -f server client libft/libft.a
+	make fclean -C libft
 
+fclean: clean
+	rm -rf $(NAME) $(CLIENT) $(SERVER) $(BONUS) $(CLIENT_BONUS) $(SERVER_BONUS)
+	
 re: fclean all
+
+re_bonus: fclean bonus
 
 .PHONY: all bonus libft clean fclean re
